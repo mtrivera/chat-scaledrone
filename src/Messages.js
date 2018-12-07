@@ -6,8 +6,8 @@ class Messages extends Component {
     const { messages } = this.props;
 
     return (
-      <ul className="Messages-list">
-        { messages.map(m => this.renderMessage(m))}
+      <ul className='Messages-list'>
+        {messages.map(m => this.renderMessage(m))}
       </ul>
     );
   }
@@ -17,11 +17,11 @@ class Messages extends Component {
     const { currentMember } = this.props;
     const messageFromMe = member.id === currentMember.id;
 
-    const className = messageFromMe ?
+    const msgClassName = messageFromMe ?
       'Messages-message currentMember' : 'Messages-message';
     
     return (
-      <li className={className}>
+      <li className={msgClassName}>
         <span
           className='avatar'
           style={{backgroundColor: member.color}}

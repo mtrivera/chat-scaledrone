@@ -21,11 +21,11 @@ class Input extends Component {
       <div className='Input'>
         <form onSubmit={e => this.onSubmit(e)}>
           <input
-          onChange={e => this.onChange(e)}
+            onChange={e => this.onChange(e)}
             value={this.state.text}
             type='text'
             placeholder='Enter your message and press ENTER'
-            autoFocus={true}
+            autofocus={true}
           />
           <button>Send</button>
         </form>

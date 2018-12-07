@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Messages from './Messages';
 import Input from './Input';
+import { scaledroneChannelID } from './keys';
 import './App.css';
 
 function randomName() {
@@ -17,30 +18,38 @@ function randomColor() {
 
 class App extends Component {
   state = {
-    messages: [
-      {
-        text: 'This is a test message!',
-        member: {
-          color: 'blue',
-          username: 'bluemoon'
-        }
-      }
-    ],
+    messages: [],
     member: {
       username: randomName(),
       color: randomColor()
     }
   }
 
-  onSendMessage = (message) => {
-    const messages = this.state.messages;
-
-    messages.push({
-      text: message,
-      member: this.state.member
+  constructor() {
+    super();
+    this.drone = new window.Scaledrone(scaledroneChannelID, {
+      data: this.state.member
     });
+    this.drone.on('open', error => {
+      if (error) return console.error(error);
 
-    this.setState({messages});
+      const member = {...this.state.member};
+      member.id = this.drone.clientId;
+      this.setState({member});
+    });
+    const room = this.drone.subscribe('observable-room');
+    room.on('data', (data, member) => {
+      const messages = this.state.messages;
+      messages.push({member, text: data});
+      this.setState({messages});
+    });
+  }
+
+  onSendMessage = (message) => {
+    this.drone.publish({
+      room: 'observable-room',
+      message
+    });
   }
 
   render() {
@@ -49,7 +58,7 @@ class App extends Component {
         <div className='App-header'>
           <h1>My Chat App</h1>
         </div>
-        <Messages 
+        <Messages
           messages={this.state.messages}
           currentMember={this.state.member}
         />
